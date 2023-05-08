@@ -1,0 +1,18 @@
+// Since we keep formatting in the excerpt, it will include links and other items that could be intereacted with
+// And we don't want the interactivity
+.DiscussionListItem-info .item-excerpt {
+    pointer-events: none;
+
+    a {
+        color: inherit;
+    }
+
+    .title-in-excerpt {
+        font-weight: bold;
+    }
+
+    // Make it easier to distinguish the mark within the semi-formatted content
+    mark {
+        background: #eee;
+    }
+}

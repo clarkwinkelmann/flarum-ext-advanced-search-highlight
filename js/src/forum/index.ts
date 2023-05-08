@@ -98,8 +98,6 @@ function highlightedResult(model: Model, attribute: string, query: string, lengt
 
     let outputtedLength = 0;
 
-    console.log(rootNodes);
-
     rootNodes.forEach(nodeInfo => {
         // Skip nodes until we find the first with a mark, then we'll count the length from there
         // If the mark was not found above, ignore this step and return content from the first node

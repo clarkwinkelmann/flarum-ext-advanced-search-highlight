@@ -28,6 +28,18 @@ class HighlightSerializerAttributes
 
         $additionalAttributes = [];
 
+        $rules = Highlighter::$rules;
+
+        if (count($rules) === 0) {
+            foreach (preg_split('~\s+~', str_replace('"', '', $query)) as $word) {
+                $rules[] = [$word, null, null];
+            }
+        }
+
+        // There can be multiple regexes per rule if there are attributes of both text and html type
+        // We'll just copy them all in here for debug purpose
+        $regexes = [];
+
         foreach (Highlighter::$attributes as $className => $attributes) {
             if ($model instanceof $className) {
                 foreach ($attributes as $attribute => $type) {
@@ -62,27 +74,26 @@ class HighlightSerializerAttributes
                             }, $value);
                         }
 
-                        $rules = [
-                            [$query, null, null],
-                            ...Highlighter::$rules,
-                        ];
-
                         foreach ($rules as $rule) {
-                            $value = preg_replace_callback('~(' .
-                                ($rule[1] === null ? '^|\s' . ($type === 'text' ? '' : '|>') : preg_quote(e($rule[1]), '~')) .
+                            $regex = '~(' .
+                                ($rule[1] === null ? '\b' . ($type === 'text' ? '' : '|>') : preg_quote(e($rule[1]), '~')) .
                                 ($type === 'text' ? '' : '(?:' . self::HTML_TAG_REGEX . ')?') .
                                 ')(' . ($type === 'text' ? preg_quote(e($rule[0]), '~') : implode('(?:' . self::HTML_TAG_REGEX . ')?', array_map(function ($char) {
                                     return preg_quote(e($char), '~');
-                                }, str_split($rule[0])))) . ')(?=' .
+                                }, mb_str_split($rule[0])))) . ')(?=' .
                                 // Use positive lookahead for the "after" part so that it doesn't prevent making another match right on the next word
                                 ($type === 'text' ? '' : '(?:' . self::HTML_TAG_REGEX . ')?') .
-                                ($rule[2] === null ? '$|\s' . ($type === 'text' ? '' : '|<') : preg_quote(e($rule[2]), '~')) .
-                                ')~i', function ($matches) {
+                                ($rule[2] === null ? '\b' . ($type === 'text' ? '' : '|<') : preg_quote(e($rule[2]), '~')) .
+                                ')~i';
+
+                            $value = preg_replace_callback($regex, function ($matches) {
                                 // If the matching text is cut across multiple HTML tags, close and re-open the mark tag each time
                                 // Even if in some situations we could keep a single mark tag across
                                 // This way we can do it via a regular expression
                                 return $matches[1] . '<mark>' . preg_replace('~(' . self::HTML_TAG_REGEX . ')~', '</mark>$1<mark>', $matches[2]) . '</mark>';
                             }, $value);
+
+                            $regexes[] = $regex;
                         }
 
                         // Restore all the content that was removed to avoid being matched by the regex
@@ -103,7 +114,8 @@ class HighlightSerializerAttributes
         }
 
         if ($this->config->inDebugMode()) {
-            $additionalAttributes['highlighterRulesDebug'] = Highlighter::$rules;
+            $additionalAttributes['highlighterRulesDebug'] = $rules;
+            $additionalAttributes['highlighterRegexDebug'] = $regexes;
         }
 
         return $additionalAttributes;

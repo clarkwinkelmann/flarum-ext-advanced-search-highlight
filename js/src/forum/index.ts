@@ -193,11 +193,11 @@ app.initializers.add('clarkwinkelmann-advanced-search-highlight', () => {
     });
 
     extend(CommentPost.prototype, 'oninit', function () {
-        this.subtree.check(() => app.current.get('stream').highlightPostSearch);
+        this.subtree.check(() => app.current.get('stream')?.highlightPostSearch);
     });
 
     extend(CommentPost.prototype, 'content', function (dom) {
-        const query = app.current.get('stream').highlightPostSearch;
+        const query = app.current.get('stream')?.highlightPostSearch;
 
         if (!query) {
             return;
@@ -219,7 +219,7 @@ app.initializers.add('clarkwinkelmann-advanced-search-highlight', () => {
     });
 
     override(CommentPost.prototype, 'refreshContent', function (original) {
-        const query = app.current.get('stream').highlightPostSearch;
+        const query = app.current.get('stream')?.highlightPostSearch;
 
         if (!query) {
             return original();

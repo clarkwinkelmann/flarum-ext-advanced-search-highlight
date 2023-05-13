@@ -37,7 +37,10 @@ You can [contact me](https://clarkwinkelmann.com/flarum) to sponsor additional f
 
 Support is offered on a "best effort" basis through the Flarum community thread.
 
+**Sponsors:** *anonymous backer*
+
 ## Links
 
 - [GitHub](https://github.com/clarkwinkelmann/flarum-ext-advanced-search-highlight)
 - [Packagist](https://packagist.org/packages/clarkwinkelmann/flarum-ext-advanced-search-highlight)
+- [Discuss](https://discuss.flarum.org/d/32870)

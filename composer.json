@@ -25,7 +25,8 @@
         }
     ],
     "support": {
-        "source": "https://github.com/clarkwinkelmann/flarum-ext-advanced-search-highlight"
+        "source": "https://github.com/clarkwinkelmann/flarum-ext-advanced-search-highlight",
+        "forum": "https://discuss.flarum.org/d/32870"
     },
     "autoload": {
         "psr-4": {

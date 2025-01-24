@@ -30,8 +30,14 @@ class HighlightSerializerAttributes
 
         $rules = Highlighter::$rules;
 
+        // Default rule intended for Flarum native search when no other extension defines custom rules
         if (count($rules) === 0) {
             foreach (preg_split('~\s+~', str_replace('"', '', $query)) as $word) {
+                // If there is a space at the beginning or end of the query, there will be "empty" tokens we don't want
+                if (empty($word)) {
+                    continue;
+                }
+
                 $rules[] = [$word, null, null];
             }
         }
